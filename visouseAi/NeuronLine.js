@@ -6,7 +6,7 @@ export default class NeuronLine {
      * стоимость одного заполненного пикселя
      * @type {number}
      */
-    pixelWeight = 1;
+    pixelWeight;
 
     /** вес соприкосновения  с другим квадратом в строке */
     jointWeight = 0.2;
@@ -16,33 +16,39 @@ export default class NeuronLine {
     /**
      * общая стоиомсть линии
      */
-    lineCost = 0;
+    lineCosts = [];
+
+    /**
+     *
+     * @param pixelWeight
+     */
+    constructor(pixelWeight) {
+        this.pixelWeight = pixelWeight;
+    }
 
     /**
      * функция активации
+     * @param input - одна линия изображения
+     * @returns {[]}
      */
     execute(input) {
-        console.log(input)
-         input.forEach(
+        let lineCostIndex = 0;
+        this.lineCosts[lineCostIndex] = 0;
+
+        input.forEach(
             (value, index) => {
-
-                console.log('Значение '+value)
-                console.log('Индекс'+index)
                 if (value !== '_') {
-                    this.lineCost += this.pixelWeight;
-
-                    if (input[index - 1] !== undefined && input[index - 1] !== '_') {
-
-                        this.lineCost += this.jointWeight;
-                    }
+                    this.lineCosts[lineCostIndex] += this.pixelWeight;
                     if (input[index + 1] !== undefined && input[index + 1] !== '_') {
-                        this.lineCost += this.jointWeight
+                        this.lineCosts[lineCostIndex] += this.jointWeight;
                     }
+                }else if (input[index+1] !== undefined) {
+                    lineCostIndex++;
+                    this.lineCosts[lineCostIndex] = 0;
                 }
             }
         )
-        console.log('ценность:' + this.lineCost);
-        return  this.lineCost;
+        return  this.lineCosts;
     }
 
     /**
